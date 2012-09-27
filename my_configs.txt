@@ -1,9 +1,0 @@
-localhost
-=========
-
-sandbox
-=======
-
-
-production
-==========
