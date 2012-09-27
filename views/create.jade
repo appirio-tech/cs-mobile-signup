@@ -1,0 +1,90 @@
+!!!5
+html
+    // include standard HTML head section
+    include includes/head
+    body
+        // One HTML file can encapsulate different jQuery Mobile “pages” that are shown one at a time.
+        // A mobile page is divided in header, content and footer.
+        // Here is the home mobile page definition
+        div(data-role='page', id='home')
+            // header
+            div(data-role='header')
+                h1 Complete the Signup Process
+            // content
+            div(data-role='content')
+                // create signup form. all data will be posted to http://requestb.in/1cg7jaq1
+                form(id='signup-form', action='http://requestb.in/nmo2qlnm', method='post')
+                    div(data-role='fieldcontain')
+                        label(for='display-name')
+                            em
+                                *
+                            span Name:
+                        // validating on undefined data to avoid showing 'undefined' in text boxes
+                        // note class='required' is used by form validator plugin
+                        - if(user.displayName == undefined)
+                            input(type='text', name='display-name', id='display-name', value='', class='required')
+                        - else
+                            input(type='text', name='display-name', id='display-name', value='#{user.displayName}', class='required')
+
+                    div(data-role='fieldcontain')
+                        label(for='user-name')
+                            em
+                                *
+                            span Username:
+                        // validating on undefined data to avoid showing 'undefined' in text boxes
+                        - if(user.username == undefined)
+                            input(type='text', name='user-name', id='user-name', value='', class='required')
+                        - else
+                            input(type='text', name='user-name', id='user-name', value='#{user.username}', class='required')
+
+                    div(data-role='fieldcontain')
+                        label(for='email')
+                            em
+                                *
+                            span Email:
+
+                        - if(user.emails == undefined && user.emails.length > 0)
+                            input(type='text', name='email', id='email', value='', class='required email')
+                        - else
+                            input(type='text', name='email', id='email', value='#{user.emails[0].value}', class='required email')
+                            input(name='provider-username', type='hidden', value='#{user.emails[0].value}')
+
+                    // create checkbox for accepting "Terms of Service"
+                    input(type='checkbox', name='checkbox-1', id='checkbox-1', class='required')
+                    label(for='checkbox-1')
+                        span I agree to the terms of service
+                    a(href='#terms-of-service', data-transition='pop')
+                        span View terms of service
+
+                    // some hidden fields required by server application
+                    input(name='provider', type='hidden', value='#{user.provider}')
+
+                    // submit button
+                    button(type='submit')
+                        span Submit
+
+        // terms-of-service mobile page
+        div(data-role='page', id='terms-of-service')
+            // header
+            div(data-role='header', data-position='fixed')
+                h1 Terms of Service
+                a(href='#', data-rel='back', data-icon='back')
+                    span SignUp Process
+            // content
+            div(data-role='content')
+                // include terms-of-service.html
+                include includes/terms-of-service.html
+            // footer
+            div(data-role='footer', data-position='fixed')
+                // create a "Back" button to return to SignUp Process
+                a(href='#', data-rel='back', data-icon='back')
+                    span SignUp Process
+
+// small javascript function to call form validation
+body.
+    <script>
+        $(document).ready(function()
+        {
+            $('#signup-form').validate();
+        });
+    </script>

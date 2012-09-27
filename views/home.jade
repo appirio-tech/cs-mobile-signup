@@ -1,0 +1,58 @@
+!!!5
+html
+    // include standard HTML head section
+    include includes/head
+    body
+        // One HTML file can encapsulate different jQuery Mobile “pages” that are shown one at a time.
+        // A mobile page is divided in header, content and footer.
+        // Here is the home mobile page definition
+        div(data-role='page', id='home')
+            // header
+            div(data-role='header')
+                h1 Welcome
+            // content
+            div(data-role='content')
+                // show some text
+                h4 CloudSpokes was created as an independent crowdsourcing development community. Join CloudSpokes to participate in cool coding challenges. Why?
+                ul
+                    li Code and have fun
+                    li Create your portfolio
+                    li Expand your mind
+                    li Learn from others
+                    li Earn some money!
+                h3 Let us deliver your winning code to the Cloud.
+                h1 Signup Now!
+                p &nbsp;
+                // creating a listview iterating on services variable
+                ul(data-role='listview')
+                    - each service in services
+                        // create list item entry
+                        li
+                            // add thumbnail and link
+                            a(href='#{service.url}', data-ajax='false')
+                                img(src='styles/images/100x100/#{service.image}')
+                                h3 #{service.name}
+                                p Login with #{service.name}
+            // footer
+            div(data-role='footer', data-position='fixed', style='text-align:center;')
+                // create about us button
+                a(href='#aboutus', data-transition='slideup')
+                    img(style='width:3em', src='styles/images/generic/CloudSpokes.png')
+                    p About CloudSpokes
+        // about us mobile page
+        div(data-role='page', id='aboutus')
+            // header with a back to "SignUp" button
+            div(data-role='header')
+                h1 About CloudSpokes
+                a(href='#', data-rel='back', data-icon='back')
+                    span SignUp
+            // content
+            div(data-role='content')
+                include includes/aboutus.html
+            // footer
+            div(data-role='footer', data-position='fixed', data-theme='c', style='text-align:center;')
+                // small buttons to signup
+                p SignUp Now!
+                - each service in services
+                    a(href='#{service.url}', data-ajax='false')
+                        img(src='styles/images/44x44/#{service.image}')
