@@ -12,7 +12,7 @@ html
                 h1 Complete the Signup Process
             // content
             div(data-role='content')
-                form(id='signup', action='/create', method='post')
+                form(id='signup')
                     div(data-role='fieldcontain')
                         label(for='display-name')
                             em
@@ -72,7 +72,7 @@ html
             // content
             div(data-role='content')
                 // include terms-of-service.html
-                include includes/terms-of-service.html
+                //include includes/terms-of-service.html
             // footer
             div(data-role='footer', data-position='fixed')
                 // create a "Back" button to return to SignUp Process
@@ -82,8 +82,22 @@ html
 // small javascript function to call form validation
 body.
     <script>
-        $(document).ready(function()
-        {
-            $('#signup').validate();
-        });
+    $( "#signup" ).validate({
+        submitHandler: function( form ) {
+            $.post('/create', $("#signup").serialize(), function(data) {
+                d = JSON.parse(data);
+                if (d.success == 'false') {
+                    alert(d.message);
+                    console.log(d);
+                } else {
+                    $.mobile.changePage( "welcome/" + $("#signup :input")[1].value, { transition: "pop"} );
+                }              
+            })       
+        }
+    });
     </script>
+
+
+
+
+

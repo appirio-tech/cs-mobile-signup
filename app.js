@@ -4,6 +4,7 @@ var util = require('util');
 var http = require('http');
 var querystring = require('querystring');
 var siteConf = require('./lib/getConfig');
+var cloudspokes = require("./lib/cloudspokes.js");
 var _ = require('underscore');
 
 //Authentication setup using passport module
@@ -62,6 +63,7 @@ passport.use(new ForceDotComStrategy(siteConf.authKeys.force,
 ));
 
 var app = module.exports = express();
+var cs = cloudspokes.init();
 
 app.configure(function() {
     app.set('view engine', 'jade');
@@ -105,61 +107,41 @@ app.get('/',
         }
     }
 )
-function NotFound(msg) {
-    this.name = 'NotFound';
-    Error.call(this, msg);
-    //Error.captureStackTrace(this, arguments.callee);
-}
 
-app.get('/account-test', function(req, res){
-    res.render('account', { user: { displayName: 'Jeff Douglas', username: 'jeffsignup1', provider: 'github', emails:[{value:'jeffsignup1@jeffdouglas.com'}] } } );
+app.get('/welcome/:username', function(req,res) {
+  req.logout();
+  res.render('welcome', { username: req.params.username });
 });
 
 NotFound.prototype.__proto__ = Error.prototype;
 
-// Authentication Routes Section 
 app.get('/account', ensureAuthenticated, function(req, res){
   res.render('account', { user: req.user });
 });
 
-app.post('/create', function(req, res){
-
-  // stringify the form post body
-  var post_data = querystring.stringify(req.body);  
-  var options = {
-    host: 'localhost',
-    port: '3000',
-    path: '/v1/accounts/create',
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': post_data.length
-    }
-  };
-
-  var api_request = http.request(options, function(res){
-    var results = '';
-    res.setEncoding('utf8');
-    res.on('data', function(chunk){
-      results += chunk;
-    });
-    res.on('end', function(){
-      //console.log('results: '+ results);
-      response = JSON.parse(results)['response'];
-      if (response['success'] == 'true') {
-        console.log('success!!');
-      } else {
-        console.log('no success: '+response['message']);
-      }
-      //res.render('account', { user: { displayName: 'Jeff Douglas', username: 'jeffsignup1', provider: 'github', emails:[{value:'jeffsignup1@jeffdouglas.com'}] } } );
-    });
+app.post('/create', function(req, res, callback){
+  // console.log('called create....' + util.inspect(req.body));
+  cs.createAccount(req.body, function(err, results){
+    console.log(results['response']);
+    res.write(JSON.stringify(results['response']));
+    res.end();    
   });
+});
 
-  api_request.write(post_data);
-  api_request.end();
+// app.post('/account', function(req, res){
+//   cs.createAccount(req.body, function(err, results){
+//     if (results['response']['success'] == 'true') {
+//       console.log(results['response'])
+//     } else {
+//       res.render('account', { error: results['response']['message'], 
+//         user: { displayName: req.body['name'], username: req.body['username'], 
+//         provider: req.body['provider'], emails:[{value: req.body['email']}] } } );
+//     }
+//   });
+// });
 
-
-
+app.get('/account-test', function(req, res){
+    res.render('account', { user: { displayName: 'Jeff Douglas', username: 'jeffsignup1', provider: 'github', emails:[{value:'jeffsignup1@jeffdouglas.com'}] } } );
 });
 
 app.get('/auth/github',
@@ -236,6 +218,12 @@ app.get('/*',
         throw new NotFound('Page not found');
     }
 );
+
+function NotFound(msg) {
+    this.name = 'NotFound';
+    Error.call(this, msg);
+    //Error.captureStackTrace(this, arguments.callee);
+}
 
 app.get('/404',
     function(req, res) {

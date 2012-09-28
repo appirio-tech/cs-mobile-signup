@@ -1,13 +1,13 @@
 var settings = {
 	'sessionSecret': 'cloudchallenge'
-	, 'port': 3001
-	, 'uri': 'http://localhost:3001' 
+	, 'port': process.env.PORT || 3001
+	, 'uri': process.env.URI
 	, 'debug': (process.env.NODE_ENV !== 'production')
 	, 'authKeys': {
 		'github': {
-			'clientID': '4fa31633b4fccaa50b0d',
-    		'clientSecret': '5e807761bf3324fbf8842a3c3e178377796a414c',
-    		'callbackURL': 'http://localhost:3001/auth/github/callback'
+			'clientID': process.env.GITHUB_OAUTH_KEY,
+    		'clientSecret': process.env.GITHUB_OAUTH_SECRET,
+    		'callbackURL': process.env.URI + '/auth/github/callback'
 			},
 		'facebook' : {
 			'clientID': '181179655349684',
@@ -59,11 +59,6 @@ var settings = {
             }
         ]
 };
-
-if (process.env.NODE_ENV == 'production') {
-	settings.uri = 'http:// cloudspokes-communities.heroku.com';
-	settings.port = process.env.PORT || 80;
-}
 
 module.exports = settings;
 

@@ -1,0 +1,2 @@
+alert('reset');
+$('#signup').resetForm();

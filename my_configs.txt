@@ -1,0 +1,14 @@
+localhost
+=========
+export URI='http://localhost:3001';
+export CLOUDSPOKES_API_KEY='6757b55b396c51948422d915ba1f2ca2';
+export CLOUDSPOKES_API_URL='http://localhost:3000/v1';
+export GITHUB_OAUTH_KEY='4fa31633b4fccaa50b0d';
+export GITHUB_OAUTH_SECRET='5e807761bf3324fbf8842a3c3e178377796a414c';
+
+sandbox
+=======
+
+
+production
+==========
